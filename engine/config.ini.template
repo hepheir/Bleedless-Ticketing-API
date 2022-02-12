@@ -1,0 +1,14 @@
+# 본 파일은 config.ini 파일 생성을 위한 더미파일 입니다.
+# 실제 설정은 config.ini 에서 해주시기 바랍니다.
+
+[driver]
+driver = drivers/chromedriver_mac64_m1-2
+
+[login]
+id = 인터파크_사용자_아이디
+password = 인터파크_사용자_비밀번호
+
+[play]
+# 뮤지컬 예매 버튼이 있는 공연안내 페이지 주소.
+# (형식: https://tickets.interpark.com/goods/????????)
+url = https://tickets.interpark.com/goods/????????
