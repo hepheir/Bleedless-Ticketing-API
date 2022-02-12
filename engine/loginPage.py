@@ -3,20 +3,21 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 
+from config import config
 from driver import driver
 
 
 URL = 'https://ticket.interpark.com/Gate/TPLogin.asp'
 
-USER_ID = input('아이디를 입력하세요 : ')
-USER_PASSWORD = input('비밀번호를 입력하세요 : ')
-
 
 def login():
     driver.get(URL)
 
-    enterId(USER_ID)
-    enterPwd(USER_PASSWORD)
+    userId = config.get('login', 'id')
+    userPwd = config.get('login', 'password')
+
+    enterId(userId)
+    enterPwd(userPwd)
     pressLoginButton()
 
 
