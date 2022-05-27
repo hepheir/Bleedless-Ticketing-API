@@ -1,0 +1,187 @@
+@startuml structure_by_layer
+
+
+package services {
+    class ShowService {
+        -showProvider: ShowProvider
+        +select(ShowSelector): Promise<Show>
+    }
+    ShowService --> selectors.ShowSelector
+
+    note top of ShowService
+    적절한 기준에 따라 예매할 공연을 선택
+    (기준은 ShowSelector를 통해 제시)
+    end note
+
+    class SeatService {
+        -seatProvider: SeatProvider
+        +select(SeatSelector, number): Promise<Seat[]>
+    }
+    SeatService --> selectors.SeatSelector
+
+    note top of SeatService
+    적절한 기준에 따라 좌석을 선택하여 예매
+    (기준은 SeatSelector를 통해 제시)
+    end note
+}
+
+
+package selectors {
+    interface ShowSelector {
+        +select(ShowProvider): Promise<Show>
+    }
+    ShowSelector --> providers.ShowProvider
+
+
+    interface SeatSelector {
+        +select(SeatProvider, number): Promise<Seat[]>
+    }
+    SeatSelector --> providers.SeatProvider
+
+
+    package selectors.implements {
+        selectors.ShowSelector <|-- FixedShowSelector
+        selectors.SeatSelector <|-- FixedSeatSelector
+        selectors.SeatSelector <|-- DistanceFirstSeatSelector
+    }
+}
+
+
+package providers {
+    interface ShowProvider {
+        +getAllShows(): Promise<Show[]>
+        +getAvailableShows(): Promise<Show[]>
+        +selectShow(Show): Promise<Show>
+    }
+    ShowProvider --> domain.Show
+
+
+    abstract SeatProvider {
+        +getShow(): Show
+        +select(Seat): Promise<Seat>
+        +getAvailableSeats(): Promise<Seat[]>
+        +onSelect(Seat): Promise<Seat>
+        +onSubmit(): Promise<Seat[]>
+    }
+    SeatProvider --> domain.Show
+
+    note left of SeatProvider::select
+    받아온 Seat 객체와 일치하는 좌석을 찾아
+    onSubmit()을 이용하여 선택하는 동작
+    end note
+
+    note left of SeatProvider::getAvailableSeats
+    선택 가능한 좌석 정보를
+    Seat[]의 형태로 반환
+    end note
+
+    note left of SeatProvider::onSelect
+    좌석을 선택하기위한 동작을
+    이 곳에 구현해야함.
+    end note
+
+    note left of SeatProvider::onSubmit
+    좌석 선택을 마치고
+    결제페이지로 넘어가는 동작을
+    이 곳에 구현해야함.
+    end note
+
+
+    package providers.implements {
+        providers.ShowProvider <|-- InterparkShowProvider
+        providers.ShowProvider <|-- MelonShowProvider
+        providers.SeatProvider <|-- InterparkSeatProvider
+        providers.SeatProvider <|-- MelonSeatProvider
+    }
+}
+
+
+package domain {
+    class Show {
+        -date: Date
+        -theatre: Theatre
+        -title: string
+        +{static} builder(): ShowBuilder
+        +getDate(): Date
+        +getTheatre(): Theatre
+        +getTitle(): string
+    }
+    Show --> Theatre
+    Show <.. ShowBuilder : creates
+
+
+    class ShowBuilder {
+        -date: Date
+        -theatre: Theatre
+        -title: string
+        +build(): Show
+        +setDate(Date): ShowBuilder
+        +setTheatre(Theatre): ShowBuilder
+        +setTitle(string): ShowBuilder
+    }
+
+
+    interface Theatre {
+        +getSeats(): Seat[]
+        +calculateDistanceFromStage(Seat): number
+    }
+    Theatre --> Seat
+
+    package domain.implements {
+        domain.Theatre <|-- CharlotteTheater
+        domain.Theatre <|-- BlueSquareShinhanCardHall
+        domain.Theatre <|-- ChungmuArtsCenterLargeTheater
+        domain.Theatre <|-- ChungmuArtsCenterMiddleTheater
+        domain.Theatre <|-- ChungmuArtsCenterSmallTheater
+    }
+
+
+    class Seat {
+        -area: string
+        -floor: string
+        -number: string
+        -row: string
+        -type: string
+        +{static} builder(): SeatBuilder
+        +getArea(): string
+        +getFloor(): string
+        +getNumber(): string
+        +getRow(): string
+        +getType(): string
+    }
+    Seat <.. SeatBuilder : creates
+
+    note left of Seat::area
+    좌석이 위치한 블록
+    (ex. A, B, ...)
+    end note
+
+    note left of Seat::number
+    좌석 번호
+    end note
+
+    note left of Seat::type
+    좌석 등급
+    (ex. VIP, S, R, ...)
+
+    전석일때는 NULL
+    end note
+
+
+    class SeatBuilder {
+        -area: string
+        -floor: string
+        -number: string
+        -row: string
+        -type: string
+        +build(): Seat
+        +setArea(string): SeatBuilder
+        +setFloor(string): SeatBuilder
+        +setNumber(string): SeatBuilder
+        +setRow(string): SeatBuilder
+        +setType(string): SeatBuilder
+    }
+}
+
+
+@enduml
