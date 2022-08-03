@@ -1,5 +1,3 @@
-import Seat from "./Seat";
-
 export default class SeatBuilder {
     private area: string = "";
     private floor: string = "";
