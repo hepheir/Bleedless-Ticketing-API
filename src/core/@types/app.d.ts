@@ -8,13 +8,13 @@ interface Seat {
     select(): void;
 }
 
-interface SeatRepository {
-    update(): Promise<any>;
-    getSeats(): Seat[];
+interface SeatForm {
+    getSelectableSeats(): Promise<Seat[]>;
+    submit(): void;
 }
 
 interface SeatSelector {
-    select(from: Seat[], target?: number): void;
+    select(from: Seat[], target?: number): Seat[];
 }
 
 interface Theater {

@@ -1,10 +1,10 @@
 export default class SeatService {
-    private repository: SeatRepository;
+    private form: SeatForm;
     private selector: SeatSelector;
     private target: number = 1;
 
-    public useRepository(repository: SeatRepository): void {
-        this.repository = repository;
+    public useForm(form: SeatForm): void {
+        this.form = form;
     }
 
     public useSelector(selector: SeatSelector): void {
@@ -15,7 +15,11 @@ export default class SeatService {
         this.target = amount;
     }
 
-    public run(): void {
-        this.selector.select(this.repository.getSeats(), this.target);
+    public async run(): Promise<void> {
+        return await this.form
+            .getSelectableSeats()
+            .then(seats => this.selector.select(seats, this.target))
+            .then(seats => console.log('selected seats:', seats))
+            .then(() => this.form.submit());
     }
 }
