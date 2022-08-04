@@ -15,11 +15,9 @@ export default class SeatService {
         this.target = amount;
     }
 
-    public async run(): Promise<void> {
-        return await this.form
-            .getSelectableSeats()
+    public run(): void {
+        this.form.getSelectableSeats()
             .then(seats => this.selector.select(seats, this.target))
-            .then(seats => console.log('selected seats:', seats))
             .then(() => this.form.submit());
     }
 }
