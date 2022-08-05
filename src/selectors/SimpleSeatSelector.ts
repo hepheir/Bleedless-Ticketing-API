@@ -1,5 +1,7 @@
 export default class SimpleSeatSelector implements SeatSelector {
-    select(seats: Seat[], target?: number): Seat[] {
-        return seats.slice(0, target);
+    private readonly target = 1;
+
+    select(seats: Seat[]): Seat[] {
+        return seats.slice(0, this.target);
     }
 }
