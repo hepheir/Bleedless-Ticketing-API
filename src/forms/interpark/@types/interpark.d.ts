@@ -1,3 +1,6 @@
+interface IfrmSeat extends HTMLIFrameElement {
+}
+
 interface IfrmSeatDetail extends HTMLIFrameElement {
 }
 
