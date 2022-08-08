@@ -39,6 +39,11 @@ interface SeatForm {
     getAvailableSeats(): Promise<Seat[]>;
 
     /**
+     * 페이지에 표시된 좌석 정보를 갱신한다.
+     */
+    refresh(): Promise<void>;
+
+    /**
      * 주어진 좌석들을 선택한다.
      * @param seats 선택할 좌석의 배열.
      */
